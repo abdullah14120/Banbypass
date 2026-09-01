@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.Socket
+import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
 class WhatsAppGatewayEngine(private val context: Context) {
@@ -15,10 +16,8 @@ class WhatsAppGatewayEngine(private val context: Context) {
             val address = InetAddress.getByName(gatewayHost)
             val socket = Socket(address, 443)
             
-            // تأمين الاتصال عبر SSL Socket لتوافقية بروتوكول واتساب
-            val sslSocket = SSLSocketFactory.getDefault().createSocket(
-                socket, gatewayHost, 443, true
-            ) as javax.net.ssl.SSLSocket
+            val factory = SSLSocketFactory.getDefault() as SSLSocketFactory
+            val sslSocket = factory.createSocket(socket, gatewayHost, 443, true) as SSLSocket
             
             sslSocket.startHandshake()
             val isConnected = sslSocket.isConnected
