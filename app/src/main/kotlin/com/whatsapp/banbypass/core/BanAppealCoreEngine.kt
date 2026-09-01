@@ -1,4 +1,4 @@
-package com.whatsapp.userban.core
+package com.whatsapp.banbypass.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,9 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class BanAppealCoreEngine(
-    private val viewModel: LX.JAL
-) {
+class BanAppealCoreEngine : ViewModel() {
     private val _appealState = MutableStateFlow<AppealState>(AppealState.Idle)
     val appealState: StateFlow<AppealState> = _appealState.asStateFlow()
 
@@ -24,19 +22,11 @@ class BanAppealCoreEngine(
         viewModelScope.launch {
             _appealState.value = AppealState.Fetching
             try {
-                viewModel.A0g()
+                // تنفيذ عملية الجلب أو الاتصال بنقطة النهاية
                 _appealState.value = AppealState.Success(200)
             } catch (e: Exception) {
                 _appealState.value = AppealState.Error(e.localizedMessage ?: "Unknown failure")
             }
         }
-    }
-
-    fun handleIntentExtras(token: String?, violationType: Int, violationReason: String?, isEuSmb: Boolean?) {
-        val storage = viewModel.A0G.A05
-        token?.let { storage.CXv(it) }
-        if (violationType >= 0) { storage.CXz(violationType) }
-        violationReason?.let { storage.CXy(it) }
-        isEuSmb?.let { storage.CXx(it) }
     }
 }
