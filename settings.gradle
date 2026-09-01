@@ -21,6 +21,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WhatsAppTransfer"
+rootProject.name = "banbypass"
 
 include ':app'
