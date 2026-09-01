@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.BypassApp" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">#075E54</item>
+        <item name="colorPrimaryDark">#128C7E</item>
+        <item name="colorAccent">#25D366</item>
+    </style>
+</resources>
