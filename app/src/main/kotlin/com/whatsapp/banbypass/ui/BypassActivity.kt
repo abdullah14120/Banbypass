@@ -23,12 +23,12 @@ class BypassActivity : AppCompatActivity() {
         }
 
         val phoneInput = EditText(this).apply {
-            hint = "Phone Number (e.g., 967XXXXXXXXX)"
+            hint = "Phone Number (e.g., 967784825455)"
             inputType = InputType.TYPE_CLASS_PHONE
         }
 
         val tokenInput = EditText(this).apply {
-            hint = "Auth Token / Registration Token"
+            hint = "Auth Token (token_used_during_reg)"
         }
 
         val submitButton = Button(this).apply { text = "Execute Appeal Payload" }
