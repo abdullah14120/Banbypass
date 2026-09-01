@@ -4,11 +4,10 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.SSLContext
 
 class BanBypassEngine(private val context: Context) {
 
@@ -27,15 +26,18 @@ class BanBypassEngine(private val context: Context) {
             val subscriberNumber = sanitizedPhone.drop(3)
 
             val url = URL("https://g.whatsapp.net/v2/register")
-            val connection = url.openConnection() as HttpURLConnection
-            
-            if (connection is HttpsURLConnection) {
-                connection.sslSocketFactory = SSLSocketFactory.getDefault() as SSLSocketFactory
+            val connection = url.openConnection() as HttpsURLConnection
+
+            // فرض استخدام TLS 1.2 أو أحدث لتجنب Connection Reset أثناء الـ Handshake
+            val sslContext = SSLContext.getInstance("TLSv1.3").apply {
+                init(null, null, null)
             }
+            connection.sslSocketFactory = sslContext.socketFactory
 
             connection.requestMethod = "POST"
-            connection.setRequestProperty("User-Agent", "WhatsApp/2.6.21 Android/34")
+            connection.setRequestProperty("User-Agent", "WhatsApp/2.24.0.0 Android/34")
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+            connection.setRequestProperty("Accept", "text/json")
             connection.connectTimeout = 15000
             connection.readTimeout = 15000
             connection.doOutput = true
@@ -57,10 +59,8 @@ class BanBypassEngine(private val context: Context) {
 
             val responseBody = responseStream?.bufferedReader().use { it?.readText() ?: "" }
             Pair(responseCode, responseBody)
-        } catch (e: java.net.UnknownHostException) {
-            Pair(-1, "DNS Resolution Failed: Check network connectivity or domain availability.")
         } catch (e: Exception) {
-            Pair(-1, e.localizedMessage ?: "Network I/O exception")
+            Pair(-1, "Connection Reset / Handshake Failed: ${e.localizedMessage}")
         }
     }
 }
