@@ -7,6 +7,8 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLSocketFactory
 
 class BanBypassEngine(private val context: Context) {
 
@@ -24,18 +26,22 @@ class BanBypassEngine(private val context: Context) {
             val countryCode = sanitizedPhone.take(3)
             val subscriberNumber = sanitizedPhone.drop(3)
 
-            // التأكد من استخدام HTTPS وتجنب مشاكل النطاقات المحلية
-            val url = URL("https://v.whatsapp.net/v2/support")
+            val url = URL("https://g.whatsapp.net/v2/register")
             val connection = url.openConnection() as HttpURLConnection
+            
+            if (connection is HttpsURLConnection) {
+                connection.sslSocketFactory = SSLSocketFactory.getDefault() as SSLSocketFactory
+            }
+
             connection.requestMethod = "POST"
             connection.setRequestProperty("User-Agent", "WhatsApp/2.6.21 Android/34")
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-            connection.connectTimeout = 10000
-            connection.readTimeout = 10000
+            connection.connectTimeout = 15000
+            connection.readTimeout = 15000
             connection.doOutput = true
 
             val deviceId = generateRandomDeviceFingerprint()
-            val payload = "cc=$countryCode&in=$subscriberNumber&cause=BAN_OVERRIDE_FALSE_POSITIVE&debug_id=$deviceId&auth_token=$authToken"
+            val payload = "cc=$countryCode&in=$subscriberNumber&mistyped=0&auth_token=$authToken&debug_id=$deviceId"
 
             OutputStreamWriter(connection.outputStream).use { writer ->
                 writer.write(payload)
