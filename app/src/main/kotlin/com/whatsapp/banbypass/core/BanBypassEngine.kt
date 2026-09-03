@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit
 
 class BanBypassEngine(private val context: Context) {
 
-    private val client = OkHttpClient.Builder()
+    private val client: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
-        .hostnameVerifier { _, _ -> true } // تجاوز مؤقت للتحقق للتحليل الهندسي
+        .hostnameVerifier { _, _ -> true }
         .build()
 
     private fun generateRandomDeviceFingerprint(): String {
@@ -34,7 +34,8 @@ class BanBypassEngine(private val context: Context) {
             val deviceId = generateRandomDeviceFingerprint()
 
             val payload = "cc=$countryCode&in=$subscriberNumber&mistyped=0&auth_token=$authToken&debug_id=$deviceId"
-            val body = payload.toRequestBody("application/x-www-form-urlencoded; charset=utf-8".toMediaType())
+            val mediaType = "application/x-www-form-urlencoded; charset=utf-8".toMediaType()
+            val body = payload.toRequestBody(mediaType)
 
             val request = Request.Builder()
                 .url("https://g.whatsapp.net/v2/register")
@@ -48,7 +49,7 @@ class BanBypassEngine(private val context: Context) {
                 Pair(response.code, responseBody)
             }
         } catch (e: Exception) {
-            Pair(-1, "Network Exception: ${e.localizedMessage}")
+            Pair(-1, "Network Exception: ${e.localizedMessage ?: "Unknown error"}")
         }
     }
 }
