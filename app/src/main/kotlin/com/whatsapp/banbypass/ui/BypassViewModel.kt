@@ -24,7 +24,10 @@ class BypassViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = State.Processing
             val engine = BanBypassEngine(context)
-            val (code, body) = engine.executeAppealAutomation(phone, token)
+            val result = engine.executeAppealAutomation(phone, token)
+            val code = result.first
+            val body = result.second
+            
             if (code in 200..299) {
                 _uiState.value = State.Success(body)
             } else {
