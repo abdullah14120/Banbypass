@@ -59,7 +59,7 @@ class BypassActivity : AppCompatActivity() {
             viewModel.uiState.collect { state ->
                 when (state) {
                     is BypassViewModel.State.Idle -> statusText.text = "Status: Ready"
-                    is BypassViewModel.State.Processing -> statusText.text = "Status: Transmitting payload..."
+                    is BypassViewModel.State.Processing -> statusText.text = "Status: Transmitting via OkHttp..."
                     is BypassViewModel.State.Success -> statusText.text = "Response [200]: ${state.response}"
                     is BypassViewModel.State.Error -> statusText.text = "Failed: ${state.message}"
                 }
